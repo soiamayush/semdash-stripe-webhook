@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { headers } from 'next/headers';
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 300;
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia", // Updated apiVersion
@@ -36,7 +40,14 @@ export async function OPTIONS() {
 console.log("webhook started");
 // Handle POST (Stripe webhook)
 export async function POST(req: NextRequest) {
-  const signature = req.headers.get("stripe-signature");
+  const headersList = headers();
+  const signature = headersList.get('stripe-signature');
+  
+  if (!signature) {
+    return new Response('Missing stripe-signature', { status: 400 });
+  }
+
+  const body = await req.text();
 
   if (!signature) {
     return NextResponse.json(
@@ -46,7 +57,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.text(); // Get raw body
+    // const body = await req.text(); // Get raw body
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
