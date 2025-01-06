@@ -38,8 +38,8 @@ if (process.env.NODE_ENV === "development") {
 // Plan map for subscriptions
 const planMap: Record<string, { name: string; credits: number }> = {
   price_1QdFN7IvZBeqKnwP0Hs7sIoI: { name: "gold", credits: 3000 },
-  price_1QdZAbIvZBeqKnwPP6Fv2zK1: { name: "diamond", credits: 100000 },
-  price_1QdZAeIvZBeqKnwP9vmmaAkW: { name: "elite", credits: 500000 },
+  price_1QdFNwIvZBeqKnwPShTi0KO2: { name: "diamond", credits: 400000 },
+  price_1QdFOtIvZBeqKnwPdV9MS7cq: { name: "elite", credits: 600000 },
 };
 
 export async function POST(request: Request) {
