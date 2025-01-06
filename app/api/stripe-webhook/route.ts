@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { headers } from "next/headers";
 // import { buffer } from "micro";
 // import { IncomingMessage } from "http";
 
@@ -39,7 +40,7 @@ export async function OPTIONS() {
 console.log("webhook started");
 // Handle POST (Stripe webhook)
 export async function POST(req: NextRequest) {
-  const signature = req.headers.get("stripe-signature");
+  const signature = headers().get("stripe-signature");
 
   if (!signature) {
     return NextResponse.json(
@@ -50,8 +51,8 @@ export async function POST(req: NextRequest) {
 
   try {
     // const body = await buffer(req.body as unknown as IncomingMessage);
-    const rawBody = await req.text();
-    const rawBuffer = new TextEncoder().encode(rawBody);
+    const body = await req.text();
+    // const rawBuffer = new TextEncoder().encode(rawBody);
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     // Verify the webhook signature
     const stripeEvent = stripe.webhooks.constructEvent(
-      Buffer.from(rawBuffer), // Convert Uint8Array to Buffer
+      body, // Convert Uint8Array to Buffer
       signature,
       webhookSecret
     );
