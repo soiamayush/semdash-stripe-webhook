@@ -12,10 +12,11 @@ const supabase = createClient(
   process.env.SUPABASE_URL || "",
   process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
-
+console.log("env log are here")
 console.log({
   supabaseUrl: process.env.SUPABASE_URL,
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  stripePublish : process.env.STRIPE_PUBLISHABLE_KEY,
   stripeSecret: process.env.STRIPE_SECRET_KEY,
   webhook: process.env.STRIPE_WEBHOOK_SECRET,
 });
