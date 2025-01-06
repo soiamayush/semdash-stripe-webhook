@@ -6,15 +6,21 @@ import { headers } from "next/headers";
 // import { IncomingMessage } from "http";
 
 // Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+const cleanEnvVar = (value :string) => value?.replace(/\r/g, "").trim();
+
+const STRIPE_SECRET_KEY = cleanEnvVar(process.env.STRIPE_SECRET_KEY!);
+const STRIPE_WEBHOOK_SECRET = cleanEnvVar(process.env.STRIPE_WEBHOOK_SECRET!);
+const SUPABASE_URL = cleanEnvVar(process.env.SUPABASE_URL!);
+const SUPABASE_ANON_KEY = cleanEnvVar(process.env.SUPABASE_ANON_KEY!);
+const stripe = new Stripe(STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia", // Updated apiVersion
 });
 
 
 // Initialize Supabase
 const supabase = createClient(
-  process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+  SUPABASE_URL || "",
+  SUPABASE_ANON_KEY|| ""
 );
 console.log("env log are here");
 console.log({
@@ -53,7 +59,7 @@ export async function POST(req: NextRequest) {
     // const body = await buffer(req.body as unknown as IncomingMessage);
     const body = await req.text();
     // const rawBuffer = new TextEncoder().encode(rawBody);
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
       throw new Error("STRIPE_WEBHOOK_SECRET environment variable is not set");
