@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     // Plan map for subscriptions
     const planMap: Record<string, { name: string; credits: number }> = {
-      price_1QdZAXIvZBeqKnwPvCm2ZyMz: { name: "gold", credits: 10000 },
+      price_1QdZAXIvZBeqKnwPvCm2ZyMz: { name: "gold", credits: 70000 },
       price_1QdZAbIvZBeqKnwPP6Fv2zK1: { name: "diamond", credits: 100000 },
       price_1QdZAeIvZBeqKnwP9vmmaAkW: { name: "elite", credits: 500000 },
     };
