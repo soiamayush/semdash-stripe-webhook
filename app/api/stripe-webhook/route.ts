@@ -1,22 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+// import { buffer } from "micro";
+// import { IncomingMessage } from "http";
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia", // Updated apiVersion
 });
 
+
 // Initialize Supabase
 const supabase = createClient(
   process.env.SUPABASE_URL || "",
   process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
-console.log("env log are here")
+console.log("env log are here");
 console.log({
   supabaseUrl: process.env.SUPABASE_URL,
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-  stripePublish : process.env.STRIPE_PUBLISHABLE_KEY,
+  stripePublish: process.env.STRIPE_PUBLISHABLE_KEY,
   stripeSecret: process.env.STRIPE_SECRET_KEY,
   webhook: process.env.STRIPE_WEBHOOK_SECRET,
 });
@@ -46,16 +49,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.text(); // Get raw body
+    // const body = await buffer(req.body as unknown as IncomingMessage);
+    const rawBody = await req.text();
+    const rawBuffer = new TextEncoder().encode(rawBody);
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
-      throw new Error("Missing STRIPE_WEBHOOK_SECRET");
+      throw new Error("STRIPE_WEBHOOK_SECRET environment variable is not set");
     }
 
     // Verify the webhook signature
     const stripeEvent = stripe.webhooks.constructEvent(
-      body,
+      Buffer.from(rawBuffer), // Convert Uint8Array to Buffer
       signature,
       webhookSecret
     );
